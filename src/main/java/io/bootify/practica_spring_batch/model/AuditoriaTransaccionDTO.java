@@ -1,0 +1,27 @@
+package io.bootify.practica_spring_batch.model;
+
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
+public class AuditoriaTransaccionDTO {
+
+    private Long id;
+
+    @NotNull
+    @Size(max = 255)
+    private String transaccionID;
+
+    @NotNull
+    @Size(max = 255)
+    private String loteID;
+
+    private Estado estadoTransaccion;
+
+    private Long controlLote;
+
+}

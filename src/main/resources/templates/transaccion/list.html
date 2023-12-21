@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{transaccion.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{transaccion.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/transaccions/add}" class="btn btn-primary ms-2">[[#{transaccion.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${transaccions.empty}">[[#{transaccion.list.empty}]]</div>
+            <div th:if="${!transaccions.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{transaccion.id.label}]]</th>
+                            <th scope="col">[[#{transaccion.cuentaID.label}]]</th>
+                            <th scope="col">[[#{transaccion.monto.label}]]</th>
+                            <th scope="col">[[#{transaccion.saldoPostTransaccion.label}]]</th>
+                            <th scope="col">[[#{transaccion.cuenta.label}]]</th>
+                            <th scope="col">[[#{transaccion.controlLote.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="transaccion : ${transaccions}">
+                            <td>[[${transaccion.id}]]</td>
+                            <td>[[${transaccion.cuentaID}]]</td>
+                            <td>[[${transaccion.monto}]]</td>
+                            <td>[[${transaccion.saldoPostTransaccion}]]</td>
+                            <td>[[${transaccion.cuenta}]]</td>
+                            <td>[[${transaccion.controlLote}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/transaccions/edit/{id}(id=${transaccion.id})}" class="btn btn-sm btn-secondary">[[#{transaccion.list.edit}]]</a>
+                                    <form th:action="@{/transaccions/delete/{id}(id=${transaccion.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{transaccion.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

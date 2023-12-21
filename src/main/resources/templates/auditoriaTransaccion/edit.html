@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{auditoriaTransaccion.edit.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{auditoriaTransaccion.edit.headline}]]</h1>
+                <div>
+                    <a th:href="@{/auditoriaTransaccions}" class="btn btn-secondary">[[#{auditoriaTransaccion.edit.back}]]</a>
+                </div>
+            </div>
+            <div th:replace="~{fragments/forms::globalErrors('auditoriaTransaccion')}" />
+            <form th:action="${requestUri}" method="post">
+                <div th:replace="~{fragments/forms::inputRow(object='auditoriaTransaccion', field='id', disabled=true, type='number')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auditoriaTransaccion', field='transaccionID')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auditoriaTransaccion', field='loteID')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auditoriaTransaccion', field='estadoTransaccion', type='radio')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='auditoriaTransaccion', field='controlLote', type='select')}" />
+                <input type="submit" th:value="#{auditoriaTransaccion.edit.headline}" class="btn btn-primary mt-4" />
+            </form>
+        </div>
+    </body>
+</html>

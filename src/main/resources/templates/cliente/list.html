@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{cliente.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{cliente.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/clientes/add}" class="btn btn-primary ms-2">[[#{cliente.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${clientes.empty}">[[#{cliente.list.empty}]]</div>
+            <div th:if="${!clientes.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{cliente.id.label}]]</th>
+                            <th scope="col">[[#{cliente.nombre.label}]]</th>
+                            <th scope="col">[[#{cliente.direccion.label}]]</th>
+                            <th scope="col">[[#{cliente.telefono.label}]]</th>
+                            <th scope="col">[[#{cliente.email.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cliente : ${clientes}">
+                            <td>[[${cliente.id}]]</td>
+                            <td>[[${cliente.nombre}]]</td>
+                            <td>[[${cliente.direccion}]]</td>
+                            <td>[[${cliente.telefono}]]</td>
+                            <td>[[${cliente.email}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/clientes/edit/{id}(id=${cliente.id})}" class="btn btn-sm btn-secondary">[[#{cliente.list.edit}]]</a>
+                                    <form th:action="@{/clientes/delete/{id}(id=${cliente.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{cliente.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{cliente.add.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{cliente.add.headline}]]</h1>
+                <div>
+                    <a th:href="@{/clientes}" class="btn btn-secondary">[[#{cliente.add.back}]]</a>
+                </div>
+            </div>
+            <div th:replace="~{fragments/forms::globalErrors('cliente')}" />
+            <form th:action="${requestUri}" method="post">
+                <div th:replace="~{fragments/forms::inputRow(object='cliente', field='nombre')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='cliente', field='direccion')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='cliente', field='telefono')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='cliente', field='email')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='cliente', field='cuentas', type='multiselect')}" />
+                <input type="submit" th:value="#{cliente.add.headline}" class="btn btn-primary mt-4" />
+            </form>
+        </div>
+    </body>
+</html>

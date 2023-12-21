@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{cuenta.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{cuenta.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/cuentas/add}" class="btn btn-primary ms-2">[[#{cuenta.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${cuentas.empty}">[[#{cuenta.list.empty}]]</div>
+            <div th:if="${!cuentas.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{cuenta.id.label}]]</th>
+                            <th scope="col">[[#{cuenta.numeroCuenta.label}]]</th>
+                            <th scope="col">[[#{cuenta.titularCuenta.label}]]</th>
+                            <th scope="col">[[#{cuenta.saldo.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="cuenta : ${cuentas}">
+                            <td>[[${cuenta.id}]]</td>
+                            <td>[[${cuenta.numeroCuenta}]]</td>
+                            <td>[[${cuenta.titularCuenta}]]</td>
+                            <td>[[${cuenta.saldo}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/cuentas/edit/{id}(id=${cuenta.id})}" class="btn btn-sm btn-secondary">[[#{cuenta.list.edit}]]</a>
+                                    <form th:action="@{/cuentas/delete/{id}(id=${cuenta.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{cuenta.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

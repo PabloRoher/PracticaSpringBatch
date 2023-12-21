@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{cuenta.add.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{cuenta.add.headline}]]</h1>
+                <div>
+                    <a th:href="@{/cuentas}" class="btn btn-secondary">[[#{cuenta.add.back}]]</a>
+                </div>
+            </div>
+            <div th:replace="~{fragments/forms::globalErrors('cuenta')}" />
+            <form th:action="${requestUri}" method="post">
+                <div th:replace="~{fragments/forms::inputRow(object='cuenta', field='numeroCuenta')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='cuenta', field='titularCuenta')}" />
+                <div th:replace="~{fragments/forms::inputRow(object='cuenta', field='saldo', type='number')}" />
+                <input type="submit" th:value="#{cuenta.add.headline}" class="btn btn-primary mt-4" />
+            </form>
+        </div>
+    </body>
+</html>

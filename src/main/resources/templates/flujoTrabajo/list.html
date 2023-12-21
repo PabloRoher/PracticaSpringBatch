@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+        layout:decorate="~{layout}">
+    <head>
+        <title>[[#{flujoTrabajo.list.headline}]]</title>
+    </head>
+    <body>
+        <div layout:fragment="content">
+            <div class="d-flex flex-wrap mb-4">
+                <h1 class="flex-grow-1">[[#{flujoTrabajo.list.headline}]]</h1>
+                <div>
+                    <a th:href="@{/flujoTrabajos/add}" class="btn btn-primary ms-2">[[#{flujoTrabajo.list.createNew}]]</a>
+                </div>
+            </div>
+            <div th:if="${flujoTrabajoes.empty}">[[#{flujoTrabajo.list.empty}]]</div>
+            <div th:if="${!flujoTrabajoes.empty}" class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">[[#{flujoTrabajo.id.label}]]</th>
+                            <th scope="col">[[#{flujoTrabajo.nombre.label}]]</th>
+                            <th scope="col">[[#{flujoTrabajo.paso.label}]]</th>
+                            <th scope="col">[[#{flujoTrabajo.estadoPaso.label}]]</th>
+                            <th><!-- --></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="flujoTrabajo : ${flujoTrabajoes}">
+                            <td>[[${flujoTrabajo.id}]]</td>
+                            <td>[[${flujoTrabajo.nombre}]]</td>
+                            <td>[[${flujoTrabajo.paso}]]</td>
+                            <td>[[${flujoTrabajo.estadoPaso}]]</td>
+                            <td>
+                                <div class="float-end text-nowrap">
+                                    <a th:href="@{/flujoTrabajos/edit/{id}(id=${flujoTrabajo.id})}" class="btn btn-sm btn-secondary">[[#{flujoTrabajo.list.edit}]]</a>
+                                    <form th:action="@{/flujoTrabajos/delete/{id}(id=${flujoTrabajo.id})}"
+                                            th:hx-confirm="#{delete.confirm}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-secondary">[[#{flujoTrabajo.list.delete}]]</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
