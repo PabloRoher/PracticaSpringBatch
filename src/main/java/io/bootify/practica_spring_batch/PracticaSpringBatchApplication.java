@@ -21,11 +21,15 @@ public class PracticaSpringBatchApplication {
     public static void main(final String[] args) {
         SpringApplication.run(PracticaSpringBatchApplication.class, args);
     }
+
+    // Da error al ejecutarlo
+    /*
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
             jobLauncher.run(job, new JobParameters());
         };
     }
+    */
 
 }
