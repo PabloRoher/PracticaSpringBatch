@@ -6,12 +6,15 @@ import io.bootify.practica_spring_batch.domain.Transaccion;
 import io.bootify.practica_spring_batch.model.TransaccionDTO;
 import io.bootify.practica_spring_batch.repos.ControlLoteRepository;
 import io.bootify.practica_spring_batch.repos.CuentaRepository;
+import io.bootify.practica_spring_batch.repos.TransaccionRepository;
 import jakarta.persistence.EntityManagerFactory;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
@@ -28,6 +31,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.Optional;
+
 @Configuration
 @EnableBatchProcessing
 public class BatchConfiguration {
@@ -42,22 +47,22 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public ItemReader<Transaccion> reader() {
-        FlatFileItemReader<Transaccion> reader = new FlatFileItemReader<>();
+    public ItemReader<TransaccionDTO> reader() {
+        FlatFileItemReader<TransaccionDTO> reader = new FlatFileItemReader<>();
 
         // Establece la ruta del archivo CSV
         reader.setResource(new ClassPathResource("transacciones.csv"));
 
         // Configura cómo dividir los datos en campos
         DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
-        lineTokenizer.setNames(new String[]{"id","cuentaID","monto","saldoPostTransaccion","cuenta","controlLote"}); // Nombres de los campos en CSV
+        lineTokenizer.setNames(new String[]{"id", "cuentaID", "monto", "saldoPostTransaccion", "cuenta", "controlLote"});
 
         // Configura cómo mapear líneas a objetos Transaccion
-        BeanWrapperFieldSetMapper<Transaccion> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
-        fieldSetMapper.setTargetType(Transaccion.class);
+        BeanWrapperFieldSetMapper<TransaccionDTO> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
+        fieldSetMapper.setTargetType(TransaccionDTO.class);
 
         // Configura el mapeador de líneas
-        DefaultLineMapper<Transaccion> lineMapper = new DefaultLineMapper<>();
+        DefaultLineMapper<TransaccionDTO> lineMapper = new DefaultLineMapper<>();
         lineMapper.setLineTokenizer(lineTokenizer);
         lineMapper.setFieldSetMapper(fieldSetMapper);
 
@@ -67,16 +72,27 @@ public class BatchConfiguration {
         return reader;
     }
 
+
     @Bean
     public ItemProcessor<TransaccionDTO, Transaccion> processor(
+            TransaccionRepository transaccionRepository, // Asume que tienes un TransaccionRepository
             CuentaRepository cuentaRepository,
             ControlLoteRepository controlLoteRepository) {
+
         return new ItemProcessor<TransaccionDTO, Transaccion>() {
             @Override
             public Transaccion process(TransaccionDTO transaccionDTO) throws Exception {
-                // Crear una nueva instancia de Transaccion
-                Transaccion transaccion = new Transaccion();
+                // Verificar si la transacción ya existe en la base de datos
+                Optional<Transaccion> transaccionExistente = transaccionRepository.findByCuentaID(transaccionDTO.getCuentaID());
 
+                if (transaccionExistente.isPresent()) {
+                    // Si la transacción ya existe, puedes decidir no procesarla
+                    // O puedes actualizar la transacción existente si eso forma parte de tus requerimientos
+                    return null; // Aquí decidimos no procesar el duplicado
+                }
+
+                // Si la transacción no existe, procede con el procesamiento
+                Transaccion transaccion = new Transaccion();
                 // Mapeo directo de atributos
                 transaccion.setCuentaID(transaccionDTO.getCuentaID());
                 transaccion.setMonto(transaccionDTO.getMonto());
@@ -94,20 +110,32 @@ public class BatchConfiguration {
 
                 // Los campos dateCreated y lastUpdated son manejados automáticamente por JPA
 
-                // Nota: El ID de Transaccion no se mapea aquí. En la mayoría de los casos,
-                // no querrás sobrescribir un ID generado por la base de datos en una nueva inserción.
-                // Si estás actualizando un registro existente, entonces sí mapearías este campo.
-
                 return transaccion;
             }
         };
     }
+
 
     @Bean
     public ItemWriter<Transaccion> writer(EntityManagerFactory entityManagerFactory) {
         JpaItemWriter<Transaccion> writer = new JpaItemWriter<>();
         writer.setEntityManagerFactory(entityManagerFactory);
         return writer;
+    }
+
+    @Bean
+    public JobExecutionListener jobExecutionListener() {
+        return new JobExecutionListenerSupport() {
+            @Override
+            public void beforeJob(JobExecution jobExecution) {
+                System.out.println("Antes de iniciar el Job: " + jobExecution.getJobInstance().getJobName());
+            }
+
+            @Override
+            public void afterJob(JobExecution jobExecution) {
+                System.out.println("Después de finalizar el Job: " + jobExecution.getStatus());
+            }
+        };
     }
 
     @Bean
