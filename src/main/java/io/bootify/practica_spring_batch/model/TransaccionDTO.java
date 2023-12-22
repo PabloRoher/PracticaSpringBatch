@@ -26,4 +26,5 @@ public class TransaccionDTO {
 
     private Long controlLote;
 
+
 }
